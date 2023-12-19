@@ -7,18 +7,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+
 public class Mytransaction {
 
 	public static void main(String args[]) throws SQLException, IOException, 
 	ClassNotFoundException {
 
-		// Load the PostgreSQL driver
+		// Load the MYSQL driver
 		// Connect to the default database with credentials
 		// You will have to change your credentials
-		Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/acidproperties", "postgres", "2349");
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/acidproperties", "root", "1234");
 
 		// For atomicity
-		conn.setAutoCommit(false);
+		conn.setAutoCommit(false);	
 
 		// For isolation	
 		conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
@@ -55,18 +56,18 @@ public class Mytransaction {
 			stmt1.executeUpdate("insert into depot values ('d4', 'New York', 2000)");
 			
 			//Creating Primary key for table product 
-			stmt1.executeUpdate("ALTER TABLE Product ADD CONSTRAINT pk_product_id PRIMARY KEY (prod_id)");
+			stmt1.executeUpdate("ALTER TABLE Product ADD CONSTRAINT pk_product PRIMARY KEY (prod_id)");
 			stmt1.executeUpdate("ALTER TABLE Product ADD CONSTRAINT ck_product_price CHECK (price > 0)");
 			
 			//Creating Primary key for table depot 
-			stmt1.executeUpdate("ALTER TABLE Depot ADD CONSTRAINT pk_depot_id PRIMARY KEY (dep_id)");
+			stmt1.executeUpdate("ALTER TABLE Depot ADD CONSTRAINT pk_depot PRIMARY KEY (dep_id)");
 			
 			//Creating Primary key for table stock as well as foreign key constraints
 			stmt1.executeUpdate("ALTER TABLE Stock ADD CONSTRAINT pk_stock PRIMARY KEY (prod_id, dep_id)");
 			stmt1.executeUpdate("ALTER TABLE Stock ADD CONSTRAINT fk_stock_depot FOREIGN KEY (dep_id) REFERENCES"
-					+ " depot(dep_id) ON DELETE CASCADE ON UPDATE CASCADE");
+					+ " depot(dep_id) ON DELETE CASCADE");
 			stmt1.executeUpdate("ALTER TABLE Stock ADD CONSTRAINT fk_stock_product FOREIGN KEY (prod_id) REFERENCES"
-					+ " Product (prod_id) ON DELETE CASCADE ON UPDATE CASCADE");
+					+ " Product (prod_id) ON DELETE CASCADE");
 			
 			//This is a prepared statement that is deleting p1,d1 from stock table
 			String deleteStockString = "delete from stock where prod_id = ?";
@@ -115,7 +116,6 @@ public class Mytransaction {
 					addDepotStmt.setInt(3, 100);
 				addDepotStmt.executeUpdate();
 			
-			
 
 					
 			//Lisiting all data from table product
@@ -149,7 +149,7 @@ public class Mytransaction {
 			stmt1.close();
 			conn.close();
 			return;
-		}
+		} 
 		conn.commit();
 		stmt1.close();
 		conn.close();
